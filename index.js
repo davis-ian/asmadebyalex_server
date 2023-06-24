@@ -20,15 +20,15 @@ const prisma = new PrismaClient();
 
 app.use(express.json());
 
-app.get("api/", (req, res) => {
+app.get("/api/", (req, res) => {
   res.send("Choo Choo! Welcome to your Express app 🚅");
 });
 
-app.get("api/json", (req, res) => {
+app.get("/api/json", (req, res) => {
   res.json({ "Choo Choo": "Welcome to your Express app 🚅" });
 });
 
-app.get("api/todos", async (req, res) => {
+app.get("/api/todos", async (req, res) => {
   const todos = await prisma.todo.findMany({
     orderBy: { createdAt: "desc" },
   });
@@ -36,7 +36,7 @@ app.get("api/todos", async (req, res) => {
   res.json(todos);
 });
 
-app.post("api/todos", async (req, res) => {
+app.post("/api/todos", async (req, res) => {
   const todo = await prisma.todo.create({
     data: {
       completed: false,
