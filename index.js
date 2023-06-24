@@ -20,11 +20,15 @@ const prisma = new PrismaClient();
 
 app.use(express.json());
 
-app.use(
-  cors({
-    origin: process.env.ALLOWED_ORIGINS,
-  })
-);
+// Get the allowed origins from the environment variable
+const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(",") || [];
+
+const corsOptions = {
+  origin: allowedOrigins,
+  credentials: true,
+};
+
+app.use(cors(corsOptions));
 
 app.get("/api/", (req, res) => {
   res.send("Choo Choo! Welcome to your Express app 🚅");
