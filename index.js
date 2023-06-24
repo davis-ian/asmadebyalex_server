@@ -1,5 +1,18 @@
 import express from "express";
 import { PrismaClient } from "@prisma/client";
+import "dotenv/config";
+// import pkg from "express-openid-connect";
+// const { auth, requiresAuth } = pkg;
+import { auth } from "express-oauth2-jwt-bearer";
+import cors from "cors";
+
+// Authorization middleware. When used, the Access Token must
+// exist and be verified against the Auth0 JSON Web Key Set.
+const checkJwt = auth({
+  audience: process.env.AUD,
+  issuerBaseURL: process.env.ISSUER_BASE_URL,
+  tokenSigningAlg: process.env.ALG,
+});
 
 const app = express();
 
