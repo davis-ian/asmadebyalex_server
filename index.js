@@ -20,6 +20,12 @@ const prisma = new PrismaClient();
 
 app.use(express.json());
 
+app.use(
+  cors({
+    origin: process.env.ALLOWED_ORIGINS,
+  })
+);
+
 app.get("/api/", (req, res) => {
   res.send("Choo Choo! Welcome to your Express app 🚅");
 });
