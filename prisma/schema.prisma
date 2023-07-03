@@ -20,3 +20,35 @@ model User {
   email String
   name String
 }
+
+model Recipe {
+  id      Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  name String
+  description String
+  ingredients RecipeIngredients[]
+}
+
+model Ingredient {
+  id      Int      @id @default(autoincrement())
+  name String
+  recipes RecipeIngredients[]
+}
+
+model MeasurementUnit {
+  id      Int      @id @default(autoincrement())
+  name String
+  recipes RecipeIngredients[]
+}
+model RecipeIngredients {
+  recipe Recipe @relation(fields: [recipeId], references: [id])
+  recipeId Int
+  ingredient Ingredient @relation(fields: [ingredientId], references: [id])
+  ingredientId Int
+  measurementUnit MeasurementUnit @relation(fields: [measurementUnitId], references: [id])
+  measurementUnitId Int
+  quantity Int
+
+  @@id([recipeId, ingredientId])
+
+}
