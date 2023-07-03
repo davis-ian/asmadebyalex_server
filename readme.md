@@ -9,13 +9,13 @@ tags:
   - json
 ---
 
-# NodeJS Express Example
+<!-- # NodeJS Express Example -->
 
-This example starts an [Express JS](https://expressjs.com/) server.
+<!-- This example starts an [Express JS](https://expressjs.com/) server. -->
 
-[![Deploy on Railway](https://railway.app/button.svg)](https://railway.app/template/FZLQ6q?referralCode=ySCnWl)
+<!-- [![Deploy on Railway](https://railway.app/button.svg)](https://railway.app/template/FZLQ6q?referralCode=ySCnWl) -->
 
-## 💁‍♀️ How to use locally
+## How to use locally
 
 - Install dependencies `npm install`
 - Start the development server `npm run dev`
