@@ -41,11 +41,11 @@ model MeasurementUnit {
   recipes RecipeIngredients[]
 }
 model RecipeIngredients {
-  recipe Recipe @relation(fields: [recipeId], references: [id])
+  recipe Recipe @relation(fields: [recipeId], references: [id], onDelete: Cascade)
   recipeId Int
-  ingredient Ingredient @relation(fields: [ingredientId], references: [id])
+  ingredient Ingredient @relation(fields: [ingredientId], references: [id], onDelete: Cascade)
   ingredientId Int
-  measurementUnit MeasurementUnit @relation(fields: [measurementUnitId], references: [id])
+  measurementUnit MeasurementUnit @relation(fields: [measurementUnitId], references: [id], onDelete: Cascade)
   measurementUnitId Int
   quantity Int
 
