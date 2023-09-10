@@ -8,6 +8,7 @@ import cors from "cors";
 import measurementRoutes from "./routes/measurementRoutes.js";
 import recipeRoutes from "./routes/recipeRoutes.js";
 import ingredientRoutes from "./routes/ingredientRoutes.js";
+import articleRoutes from "./routes/articleRoutes.js";
 
 // Authorization middleware. When used, the Access Token must
 // exist and be verified against the Auth0 JSON Web Key Set.
@@ -35,6 +36,7 @@ app.use(cors(corsOptions));
 app.use("/api/measurements", measurementRoutes);
 app.use("/api/recipes", recipeRoutes);
 app.use("/api/ingredients", ingredientRoutes);
+app.use("/api/articles", articleRoutes);
 
 // Private endpoint
 app.get("/api/private", checkJwt, function (req, res) {
