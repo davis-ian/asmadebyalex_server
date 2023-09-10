@@ -1,5 +1,7 @@
 import express from "express";
 import "dotenv/config";
+
+import bodyParser from "body-parser";
 // import pkg from "express-openid-connect";
 // const { auth, requiresAuth } = pkg;
 import { auth } from "express-oauth2-jwt-bearer";
@@ -20,7 +22,11 @@ const checkJwt = auth({
 
 const app = express();
 
-app.use(express.json());
+// app.use(express.json());
+
+// Increase the payload limit to a larger value like '50mb'
+app.use(bodyParser.json({ limit: "50mb" }));
+app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
 
 // Get the allowed origins from the environment variable
 const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(",") || [];
