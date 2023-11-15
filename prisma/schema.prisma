@@ -59,4 +59,23 @@ model Article {
   content   String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  media Media[]
+}
+
+model Media {
+  id Int @id @default(autoincrement())
+  asset_id String
+  public_id String
+  width Int
+  height Int
+  format String
+  resourceType String
+  createdAt DateTime
+  bytes Int
+  url String
+  secureUrl String
+  folder String
+  originalFileName String
+  article Article? @relation(fields: [articleId], references: [id])
+  articleId Int?
 }
