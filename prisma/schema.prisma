@@ -21,13 +21,6 @@ model User {
   name String
 }
 
-model Recipe {
-  id      Int      @id @default(autoincrement())
-  createdAt DateTime @default(now())
-  name String
-  description String
-  ingredients RecipeIngredients[]
-}
 
 model Ingredient {
   id      Int      @id @default(autoincrement())
@@ -53,19 +46,28 @@ model RecipeIngredients {
 
 }
 
+model Recipe {
+  id      Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  name String
+  description String
+  ingredients RecipeIngredients[]
+  photos      RecipePhoto[]    @relation("RecipeToPhotos")
+  mainPhotoId Int?
+}
+
 model Article {
   id        Int      @id @default(autoincrement())
   title     String
   content   String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  media Media[]
 }
 
-model Media {
+model RecipePhoto {
   id Int @id @default(autoincrement())
-  asset_id String
-  public_id String
+  assetId String
+  publicId String
   width Int
   height Int
   format String
@@ -76,6 +78,6 @@ model Media {
   secureUrl String
   folder String
   originalFileName String
-  article Article? @relation(fields: [articleId], references: [id])
-  articleId Int?
+  recipeId Int
+  recipe            Recipe   @relation("RecipeToPhotos", fields: [recipeId], references: [id])
 }

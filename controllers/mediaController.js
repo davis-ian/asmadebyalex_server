@@ -32,25 +32,26 @@ const mediaController = {
     try {
       const uploadResp = req.body;
 
-      // Extract the articleId from the request body (if provided)
-      const { articleId } = req.body;
+      const { recipeId } = req.body;
 
-      const media = await prisma.media.create({
-        data: {
-          asset_id: uploadResp.asset_id,
-          public_id: uploadResp.public_id,
-          width: uploadResp.width,
-          height: uploadResp.height,
-          format: uploadResp.format,
-          resourceType: uploadResp.resource_type,
-          createdAt: new Date(uploadResp.created_at),
-          bytes: uploadResp.bytes,
-          url: uploadResp.url,
-          secureUrl: uploadResp.secure_url,
-          folder: uploadResp.folder,
-          originalFileName: uploadResp.original_filename,
-          articleId: articleId || null,
-        },
+      const data = {
+        assetId: uploadResp.asset_id,
+        publicId: uploadResp.public_id,
+        width: uploadResp.width,
+        height: uploadResp.height,
+        format: uploadResp.format,
+        resourceType: uploadResp.resource_type,
+        createdAt: new Date(uploadResp.created_at),
+        bytes: uploadResp.bytes,
+        url: uploadResp.url,
+        secureUrl: uploadResp.secure_url,
+        folder: uploadResp.folder,
+        originalFileName: uploadResp.original_filename,
+        recipe: { connect: { id: parseInt(recipeId) } },
+      };
+
+      const media = await prisma.recipePhoto.create({
+        data,
       });
 
       res.json(media);

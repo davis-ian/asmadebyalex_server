@@ -12,14 +12,30 @@ const recipeController = {
             measurementUnit: true,
           },
         },
+        photos: true,
       },
     });
-    res.json(recipes);
+
+    // Iterate through the recipes and update mainPhoto where mainPhotoId matches a photo's id
+    const recipesWithMainPhoto = recipes.map((recipe) => {
+      if (recipe.mainPhotoId !== null) {
+        const mainPhoto = recipe.photos.find(
+          (photo) => photo.id === recipe.mainPhotoId
+        );
+        if (mainPhoto) {
+          recipe.mainPhoto = mainPhoto;
+        }
+      }
+      recipe.photos = [];
+      return recipe;
+    });
+
+    res.json(recipesWithMainPhoto);
   },
 
   getRecipe: async (req, res) => {
     const { id } = req.params;
-    const recipes = await prisma.recipe.findUnique({
+    const recipe = await prisma.recipe.findUnique({
       where: { id: Number(id) },
       include: {
         ingredients: {
@@ -28,9 +44,19 @@ const recipeController = {
             measurementUnit: true,
           },
         },
+        photos: true,
       },
     });
-    res.json(recipes);
+
+    if (recipe.mainPhotoId !== null) {
+      const mainPhoto = recipe.photos.find(
+        (photo) => photo.id === recipe.mainPhotoId
+      );
+      if (mainPhoto) {
+        recipe.mainPhoto = mainPhoto;
+      }
+    }
+    res.json(recipe);
   },
   postRecipe: async (req, res) => {
     const { name, description, ingredients } = req.body;
@@ -114,6 +140,55 @@ const recipeController = {
       res.json(updatedRecipe);
     } catch (error) {
       res.status(500).json({ error: "Something went wrong" });
+    }
+  },
+
+  setMainPhoto: async (req, res) => {
+    const recipeId = parseInt(req.params.recipeId);
+    const photoId = parseInt(req.params.photoId);
+
+    try {
+      const recipe = await prisma.recipe.findUnique({
+        where: {
+          id: recipeId,
+        },
+      });
+
+      const photo = await prisma.recipePhoto.findUnique({
+        where: {
+          id: photoId,
+        },
+      });
+
+      if (!recipe) {
+        throw new Error(`Recipe with ID: ${recipeId} not found.`);
+      }
+
+      if (!photo) {
+        throw new Error(`Photo with ID: ${photoId} and not found.`);
+      }
+
+      if (photo.recipeId !== recipeId) {
+        throw new Error(
+          `Photo with ID ${photoId} does not belong to recipe with ID ${recipeId}.`
+        );
+      }
+
+      const updatedRecipe = await prisma.recipe.update({
+        where: {
+          id: recipeId,
+        },
+        data: {
+          mainPhotoId: photoId,
+        },
+      });
+
+      res.json(updatedRecipe);
+    } catch (error) {
+      console.error("Error seeing main photo id for recide: ", error);
+      throw error;
+    } finally {
+      await prisma.$disconnect();
     }
   },
 };
