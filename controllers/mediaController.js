@@ -60,6 +60,34 @@ const mediaController = {
       res.status(500);
     }
   },
+  deleteRecipePhoto: async (req, res) => {
+    const photoId = parseInt(req.params.id);
+
+    const photo = await prisma.recipePhoto.findUnique({
+      where: {
+        id: photoId,
+      },
+    });
+
+    if (!photo) {
+      throw new Error(`Photo with ID: ${photoId} not found.`);
+    }
+
+    try {
+      const result = await cloudinary.uploader.destroy(photo.publicId);
+      console.log("Photo deleted successfully");
+    } catch (error) {
+      throw new Error("Error deleting photo from cloudinary");
+    }
+
+    const deletedItem = await prisma.recipePhoto.delete({
+      where: {
+        id: photoId,
+      },
+    });
+
+    res.json(deletedItem);
+  },
 };
 
 export default mediaController;
