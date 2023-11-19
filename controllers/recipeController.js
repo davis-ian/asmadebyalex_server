@@ -3,18 +3,41 @@ const prisma = new PrismaClient();
 
 const recipeController = {
   getRecipes: async (req, res) => {
-    const recipes = await prisma.recipe.findMany({
-      orderBy: { createdAt: "desc" },
-      include: {
-        ingredients: {
-          include: {
-            ingredient: true,
-            measurementUnit: true,
-          },
+    const { featured } = req.query; // Get the 'featured' query parameter
+
+    let recipes;
+
+    if (featured === "true") {
+      // Filter recipes where 'featured' is true
+      recipes = await prisma.recipe.findMany({
+        where: {
+          featured: true,
         },
-        photos: true,
-      },
-    });
+        orderBy: { createdAt: "desc" },
+        include: {
+          ingredients: {
+            include: {
+              ingredient: true,
+              measurementUnit: true,
+            },
+          },
+          photos: true,
+        },
+      });
+    } else {
+      recipes = await prisma.recipe.findMany({
+        orderBy: { createdAt: "desc" },
+        include: {
+          ingredients: {
+            include: {
+              ingredient: true,
+              measurementUnit: true,
+            },
+          },
+          photos: true,
+        },
+      });
+    }
 
     // Iterate through the recipes and update mainPhoto where mainPhotoId matches a photo's id
     const recipesWithMainPhoto = recipes.map((recipe) => {
@@ -189,6 +212,32 @@ const recipeController = {
       throw error;
     } finally {
       await prisma.$disconnect();
+    }
+  },
+
+  updateFeatured: async (req, res) => {
+    const recipeId = parseInt(req.params.id);
+    const featured = req.body.featured;
+
+    try {
+      // Find the existing todo item by its ID
+      const recipe = await prisma.recipe.findUnique({
+        where: { id: recipeId },
+      });
+
+      if (!recipe) {
+        return res.status(404).json({ error: "Recipe not found" });
+      }
+
+      const updatedRecipe = await prisma.recipe.update({
+        where: { id: recipeId },
+        data: {
+          featured: featured,
+        },
+      });
+      res.json(updatedRecipe);
+    } catch (error) {
+      res.status(500).json({ error: "Something went wrong" });
     }
   },
 };

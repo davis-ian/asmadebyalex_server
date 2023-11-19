@@ -54,6 +54,7 @@ model Recipe {
   ingredients RecipeIngredients[]
   photos      RecipePhoto[]    @relation("RecipeToPhotos")
   mainPhotoId Int?
+  featured Boolean @default(false)
 }
 
 model Article {

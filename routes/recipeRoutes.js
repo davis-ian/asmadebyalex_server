@@ -9,5 +9,6 @@ router.post("/", recipeController.postRecipe);
 router.delete("/:id", recipeController.deleteRecipe);
 router.put("/:id", recipeController.updateRecipe);
 router.put("/main-photo/:recipeId/:photoId", recipeController.setMainPhoto);
+router.put("/featured/:id", recipeController.updateFeatured);
 
 export default router;
