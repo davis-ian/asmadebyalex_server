@@ -41,7 +41,7 @@ app.use(cors(corsOptions));
 
 // TODO: Protect admin routes
 app.use("/api/measurements", measurementRoutes);
-app.use("/api/recipes", recipeRoutes);
+app.use("/api/recipies", recipeRoutes);
 app.use("/api/ingredients", ingredientRoutes);
 app.use("/api/articles", articleRoutes);
 app.use("/api/media", mediaRoutes);
