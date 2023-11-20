@@ -57,7 +57,11 @@ const recipeController = {
   },
 
   getRecipe: async (req, res) => {
-    const { id } = req.params;
+    const { id } = parseInt(req.params.id);
+
+    if (typeof id != "number") {
+      return res.status(400).json({ error: "Invalid ID type." });
+    }
     const recipe = await prisma.recipe.findUnique({
       where: { id: Number(id) },
       include: {
