@@ -1,5 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
+import { isSuperAdmin } from "./../authUtils.js";
 
 const articleController = {
   getArticles: async (req, res) => {
@@ -17,6 +18,9 @@ const articleController = {
     res.json(article);
   },
   postArticle: async (req, res) => {
+    if (!(await isSuperAdmin(req))) {
+      return res.status(401).json({ error: "Unauthorized Access" });
+    }
     const { title, content } = req.body;
 
     // Create a new recipe with existing ingredients
@@ -30,6 +34,9 @@ const articleController = {
   },
 
   deleteArticle: async (req, res) => {
+    if (!(await isSuperAdmin(req))) {
+      return res.status(401).json({ error: "Unauthorized Access" });
+    }
     const { id } = req.params;
     try {
       // Delete the item using Prisma
@@ -46,6 +53,9 @@ const articleController = {
   },
 
   updateArticle: async (req, res) => {
+    if (!(await isSuperAdmin(req))) {
+      return res.status(401).json({ error: "Unauthorized Access" });
+    }
     const { id } = req.params;
     const { title, content } = req.body;
     try {

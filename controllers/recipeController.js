@@ -1,5 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
+import { isSuperAdmin } from "./../authUtils.js";
 
 const recipeController = {
   getRecipes: async (req, res) => {
@@ -86,6 +87,10 @@ const recipeController = {
     res.json(recipe);
   },
   postRecipe: async (req, res) => {
+    if (!(await isSuperAdmin(req))) {
+      return res.status(401).json({ error: "Unauthorized Access" });
+    }
+
     const { name, description, ingredients } = req.body;
 
     // Create a new recipe with existing ingredients
@@ -114,6 +119,10 @@ const recipeController = {
   },
 
   deleteRecipe: async (req, res) => {
+    if (!(await isSuperAdmin(req))) {
+      return res.status(401).json({ error: "Unauthorized Access" });
+    }
+
     const { id } = req.params;
     try {
       // Delete the item using Prisma
@@ -130,6 +139,9 @@ const recipeController = {
   },
 
   updateRecipe: async (req, res) => {
+    if (!(await isSuperAdmin(req))) {
+      return res.status(401).json({ error: "Unauthorized Access" });
+    }
     const { id } = req.params;
     const { name, description, ingredients } = req.body;
     try {
@@ -171,6 +183,9 @@ const recipeController = {
   },
 
   setMainPhoto: async (req, res) => {
+    if (!(await isSuperAdmin(req))) {
+      return res.status(401).json({ error: "Unauthorized Access" });
+    }
     const recipeId = parseInt(req.params.recipeId);
     const photoId = parseInt(req.params.photoId);
 
@@ -220,6 +235,9 @@ const recipeController = {
   },
 
   updateFeatured: async (req, res) => {
+    if (!(await isSuperAdmin(req))) {
+      return res.status(401).json({ error: "Unauthorized Access" });
+    }
     const recipeId = parseInt(req.params.id);
     const featured = req.body.featured;
 

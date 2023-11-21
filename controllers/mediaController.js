@@ -4,6 +4,8 @@ const prisma = new PrismaClient();
 import crypto from "crypto";
 import { v4 as uuidv4 } from "uuid";
 
+import { isSuperAdmin } from "./../authUtils.js";
+
 const cloudName = process.env.CLOUDINARY_CLOUD_NAME;
 const cloudApiKey = process.env.CLOUDINARY_API_KEY;
 const cloudSecret = process.env.CLOUDINARY_API_SECRET;
@@ -17,6 +19,9 @@ cloudinary.config({
 
 const mediaController = {
   getUploadSignature: async (req, res) => {
+    if (!(await isSuperAdmin(req))) {
+      return res.status(401).json({ error: "Unauthorized Access" });
+    }
     const timestamp = Math.round(new Date().getTime() / 1000);
 
     const signature = cloudinary.utils.api_sign_request(
@@ -29,6 +34,9 @@ const mediaController = {
     res.json({ signature, timestamp });
   },
   addToDb: async (req, res) => {
+    if (!(await isSuperAdmin(req))) {
+      return res.status(401).json({ error: "Unauthorized Access" });
+    }
     try {
       const uploadResp = req.body;
 
@@ -61,6 +69,9 @@ const mediaController = {
     }
   },
   deleteRecipePhoto: async (req, res) => {
+    if (!(await isSuperAdmin(req))) {
+      return res.status(401).json({ error: "Unauthorized Access" });
+    }
     const photoId = parseInt(req.params.id);
 
     const photo = await prisma.recipePhoto.findUnique({
