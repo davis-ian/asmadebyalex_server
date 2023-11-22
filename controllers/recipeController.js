@@ -144,7 +144,7 @@ const recipeController = {
     }
 
     const { id } = req.params;
-    const { name, description, ingredients } = req.body;
+    const { name, description, instructions, ingredients } = req.body;
 
     try {
       const recipe = await prisma.recipe.findUnique({
@@ -181,6 +181,7 @@ const recipeController = {
         data: {
           name: name || recipe.name,
           description: description || recipe.description,
+          instructions: instructions,
           ingredients: {
             create: newIngredients.map((ingredient) => ({
               quantity: ingredient.quantity,

@@ -50,6 +50,7 @@ model Recipe {
   createdAt DateTime @default(now())
   name String
   description String
+  instructions String? @default("")
   ingredients RecipeIngredient[]
   photos      RecipePhoto[]    @relation("RecipeToPhotos")
   mainPhotoId Int?
