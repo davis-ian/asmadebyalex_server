@@ -5,5 +5,6 @@ const router = express.Router();
 
 router.get("/", ingredientController.getIngredients);
 router.post("/", ingredientController.postIngredient);
+router.put("/:id", ingredientController.updateIngredient);
 
 export default router;

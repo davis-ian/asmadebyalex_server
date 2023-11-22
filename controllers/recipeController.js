@@ -58,7 +58,7 @@ const recipeController = {
   },
 
   getRecipe: async (req, res) => {
-    const { id } = parseInt(req.params.id);
+    const id = parseInt(req.params.id);
 
     if (typeof id != "number") {
       return res.status(400).json({ error: "Invalid ID type." });
