@@ -78,6 +78,61 @@ const ingredientController = {
       await prisma.$disconnect();
     }
   },
+
+  deleteIngredient: async (req, res) => {
+    try {
+      if (!(await isSuperAdmin(req))) {
+        return res.status(401).json({ error: "Unauthorized Access" });
+      }
+
+      const ingredientId = parseInt(req.params.id);
+
+      if (!ingredientId) {
+        return res.status(400).json({
+          error: "Bad Request",
+          message: "Ingredient ID is required",
+        });
+      }
+
+      // Check if the ingredient with the specified ID exists
+      const existingIngredient = await prisma.ingredient.findUnique({
+        where: { id: ingredientId },
+      });
+
+      if (!existingIngredient) {
+        return res.status(404).json({
+          error: "Not Found",
+          message: "Ingredient not found",
+        });
+      }
+
+      // Check if the ingredient is used in any recipes
+      const recipesUsingIngredient = await prisma.recipeIngredients.findMany({
+        where: { ingredientId: ingredientId },
+      });
+
+      if (recipesUsingIngredient.length > 0) {
+        return res.status(400).json({
+          error: "Bad Request",
+          message:
+            "Cannot delete the ingredient because it is used in recipes.",
+        });
+      }
+
+      // Delete the ingredient
+      await prisma.ingredient.delete({
+        where: { id: ingredientId },
+      });
+
+      res.json({ message: "Ingredient deleted successfully" });
+    } catch (error) {
+      console.error("Error deleting ingredient:", error);
+      res.status(500).json({ error: "Internal Server Error" });
+    } finally {
+      // Make sure to disconnect from the Prisma Client after the operation
+      await prisma.$disconnect();
+    }
+  },
 };
 
 export default ingredientController;
