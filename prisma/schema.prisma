@@ -25,15 +25,15 @@ model User {
 model Ingredient {
   id      Int      @id @default(autoincrement())
   name String
-  recipes RecipeIngredients[]
+  recipes RecipeIngredient[]
 }
 
 model MeasurementUnit {
   id      Int      @id @default(autoincrement())
   name String
-  recipes RecipeIngredients[]
+  recipes RecipeIngredient[]
 }
-model RecipeIngredients {
+model RecipeIngredient {
   recipe Recipe @relation(fields: [recipeId], references: [id], onDelete: Cascade)
   recipeId Int
   ingredient Ingredient @relation(fields: [ingredientId], references: [id], onDelete: Cascade)
@@ -50,7 +50,7 @@ model Recipe {
   createdAt DateTime @default(now())
   name String
   description String
-  ingredients RecipeIngredients[]
+  ingredients RecipeIngredient[]
   photos      RecipePhoto[]    @relation("RecipeToPhotos")
   mainPhotoId Int?
   featured Boolean @default(false)

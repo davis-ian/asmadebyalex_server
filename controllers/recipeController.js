@@ -142,17 +142,39 @@ const recipeController = {
     if (!(await isSuperAdmin(req))) {
       return res.status(401).json({ error: "Unauthorized Access" });
     }
+
     const { id } = req.params;
     const { name, description, ingredients } = req.body;
+
     try {
-      // Find the existing todo item by its ID
       const recipe = await prisma.recipe.findUnique({
         where: { id: Number(id) },
+        include: { ingredients: true },
       });
 
       if (!recipe) {
         return res.status(404).json({ error: "Recipe not found" });
       }
+
+      const updatedIngredientIds = ingredients.map(
+        (ingredient) => ingredient.ingredientId
+      );
+
+      const ingredientIdsToDelete = recipe.ingredients
+        .filter(
+          (ingredient) =>
+            !updatedIngredientIds.includes(ingredient.ingredientId)
+        )
+        .map((ingredient) => ({
+          ingredientId: ingredient.ingredientId,
+        }));
+
+      const newIngredients = ingredients.filter((ingredient) => {
+        return !recipe.ingredients.some(
+          (connectedIngredient) =>
+            connectedIngredient.ingredientId === ingredient.ingredientId
+        );
+      });
 
       const updatedRecipe = await prisma.recipe.update({
         where: { id: Number(id) },
@@ -160,7 +182,7 @@ const recipeController = {
           name: name || recipe.name,
           description: description || recipe.description,
           ingredients: {
-            create: ingredients.map((ingredient) => ({
+            create: newIngredients.map((ingredient) => ({
               quantity: ingredient.quantity,
               ingredient: {
                 connect: {
@@ -173,9 +195,11 @@ const recipeController = {
                 },
               },
             })),
+            deleteMany: ingredientIdsToDelete,
           },
         },
       });
+
       res.json(updatedRecipe);
     } catch (error) {
       res.status(500).json({ error: "Something went wrong" });
