@@ -169,12 +169,12 @@ const recipeController = {
           ingredientId: ingredient.ingredientId,
         }));
 
-      const newIngredients = ingredients.filter((ingredient) => {
-        return !recipe.ingredients.some(
-          (connectedIngredient) =>
-            connectedIngredient.ingredientId === ingredient.ingredientId
-        );
-      });
+      // const newIngredients = ingredients.filter((ingredient) => {
+      //   return !recipe.ingredients.some(
+      //     (connectedIngredient) =>
+      //       connectedIngredient.ingredientId === ingredient.ingredientId
+      //   );
+      // });
 
       const updatedRecipe = await prisma.recipe.update({
         where: { id: Number(id) },
@@ -183,16 +183,32 @@ const recipeController = {
           description: description || recipe.description,
           instructions: instructions,
           ingredients: {
-            create: newIngredients.map((ingredient) => ({
-              quantity: ingredient.quantity,
-              ingredient: {
-                connect: {
-                  id: ingredient.ingredientId,
+            upsert: ingredients.map((ingredient) => ({
+              where: {
+                recipeId_ingredientId: {
+                  recipeId: Number(id),
+                  ingredientId: ingredient.ingredientId,
                 },
               },
-              measurementUnit: {
-                connect: {
-                  id: ingredient.measurementUnitId,
+              create: {
+                quantity: ingredient.quantity,
+                ingredient: {
+                  connect: {
+                    id: ingredient.ingredientId,
+                  },
+                },
+                measurementUnit: {
+                  connect: {
+                    id: ingredient.measurementUnitId,
+                  },
+                },
+              },
+              update: {
+                quantity: ingredient.quantity,
+                measurementUnit: {
+                  connect: {
+                    id: ingredient.measurementUnitId,
+                  },
                 },
               },
             })),
