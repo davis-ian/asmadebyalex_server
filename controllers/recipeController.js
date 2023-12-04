@@ -91,13 +91,14 @@ const recipeController = {
       return res.status(401).json({ error: "Unauthorized Access" });
     }
 
-    const { name, description, ingredients } = req.body;
+    const { name, description, ingredients, instructions } = req.body;
 
     // Create a new recipe with existing ingredients
     const recipe = await prisma.recipe.create({
       data: {
         name,
         description: description ?? "",
+        instructions: instructions,
         ingredients: {
           create: ingredients.map((ingredient) => ({
             quantity: ingredient.quantity,
