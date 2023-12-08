@@ -4,39 +4,46 @@ import { isSuperAdmin } from "./../authUtils.js";
 
 const recipeController = {
   getRecipes: async (req, res) => {
-    const { featured } = req.query; // Get the 'featured' query parameter
+    const { featured, search } = req.query; // Get the 'featured' query parameter
 
     let recipes;
+
+    const recipeFilter = {
+      orderBy: { createdAt: "desc" },
+      include: {
+        ingredients: {
+          include: {
+            ingredient: true,
+            measurementUnit: true,
+          },
+        },
+        photos: true,
+      },
+    };
 
     if (featured === "true") {
       // Filter recipes where 'featured' is true
       recipes = await prisma.recipe.findMany({
+        ...recipeFilter,
         where: {
           featured: true,
-        },
-        orderBy: { createdAt: "desc" },
-        include: {
-          ingredients: {
-            include: {
-              ingredient: true,
-              measurementUnit: true,
-            },
-          },
-          photos: true,
         },
       });
     } else {
       recipes = await prisma.recipe.findMany({
-        orderBy: { createdAt: "desc" },
-        include: {
-          ingredients: {
-            include: {
-              ingredient: true,
-              measurementUnit: true,
-            },
-          },
-          photos: true,
-        },
+        ...recipeFilter,
+      });
+    }
+
+    // If a search term is provided, filter recipes based on the search term
+    if (search) {
+      recipes = recipes.filter((recipe) => {
+        // You can define your own logic for filtering based on the 'search' parameter
+        return (
+          recipe.name.toLowerCase().includes(search.toLowerCase()) ||
+          recipe.description.toLowerCase().includes(search.toLowerCase())
+          // Add more fields to search if needed
+        );
       });
     }
 
