@@ -33,6 +33,7 @@ app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
 const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(",") || [];
 
 const corsOptions = {
+  origin: allowedOrigins,
   credentials: true, // Add this line to enable credentials support
 };
 
