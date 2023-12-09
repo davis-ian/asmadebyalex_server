@@ -39,11 +39,9 @@ const recipeController = {
     if (search) {
       recipes = recipes.filter((recipe) => {
         // You can define your own logic for filtering based on the 'search' parameter
-        return (
-          recipe.name.toLowerCase().includes(search.toLowerCase()) ||
-          recipe.description.toLowerCase().includes(search.toLowerCase())
-          // Add more fields to search if needed
-        );
+        return recipe.name.toLowerCase().includes(search.toLowerCase());
+        // recipe.description.toLowerCase().includes(search.toLowerCase())
+        // Add more fields to search if needed
       });
     }
 
