@@ -71,7 +71,7 @@ const articleController = {
       const updatedArticle = await prisma.article.update({
         where: { id: Number(id) },
         data: {
-          name: title || article.title,
+          title: title || article.title,
           content: content || article.content,
         },
       });
