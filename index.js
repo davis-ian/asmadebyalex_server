@@ -33,19 +33,6 @@ app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
 const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(",") || [];
 
 const corsOptions = {
-  origin: function (origin, callback) {
-    if (
-      origin === undefined || // For same-origin requests
-      origin.includes("asmadebyalex.com") ||
-      origin.includes("localhost")
-    ) {
-      callback(null, true);
-    } else {
-      callback(new Error("Not allowed by CORS"));
-    }
-  },
-  methods: ["GET", "POST", "PUT", "DELETE"],
-  optionsSuccessStatus: 204,
   credentials: true, // Add this line to enable credentials support
 };
 
